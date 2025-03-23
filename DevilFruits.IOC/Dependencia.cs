@@ -1,5 +1,7 @@
 ﻿using DevilFruits.BLL.Mappeo;
 using DevilFruits.BLL.Repositories;
+using DevilFruits.BLL.Services;
+using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DAL.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +28,7 @@ namespace DevilFruits.IOC
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             //Dependencias de los servicios
-
+            services.AddScoped<IUsuarioService, UsuarioService>();
 
         }
 
