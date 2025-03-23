@@ -63,14 +63,35 @@ namespace DevilFruits.BLL.Services
             }
         }
 
-        public Task<bool> EditarUsuario(UsuarioDTO usuario, int usuarioActual)
+        public async Task<bool> EditarUsuario(UsuarioDTO usuario, int usuarioActual)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var usuarioEditar = _mapper.Map<Usuario>(usuario);
+                usuarioEditar.Id = usuarioActual;
+                return await _repository.Editar(usuarioEditar);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al editar el usuario", ex);
+            }
         }
 
-        public Task<bool> EliminarUsuario(int id)
+        public async Task<bool> EliminarUsuario(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var usuario = await _repository.Obtener(x => x.Id == id);
+                if (usuario == null)
+                {
+                    throw new Exception("Usuario no encontrado");
+                }
+                return await _repository.Eliminar(usuario);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar el usuario", ex);
+            }
         }
     }
 

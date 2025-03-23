@@ -60,6 +60,42 @@ namespace DevilFruits.API.Controllers.Usuarios
                 return BadRequest(new { message = ex.Message });
             }
         }
-        
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UsuarioDTO>> EditarUsuario(int id, [FromBody] UsuarioDTO usuario)
+        {
+            try
+            {
+                if(id != usuario.Id)
+                {
+                    return BadRequest(new { message = "Datos incorrectos" });
+                }
+                var usuarioEditado = await _usuarioService.EditarUsuario(usuario, id);
+                if (!usuarioEditado)
+                {
+                    return NotFound(new { message = "Usuario no encontrado" });
+                }
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> EliminarUsuario(int id)
+        {
+            try
+            {
+                var resultado = await _usuarioService.EliminarUsuario(id);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }
