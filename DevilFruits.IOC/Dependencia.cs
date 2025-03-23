@@ -1,4 +1,5 @@
 ﻿using DevilFruits.BLL.Mappeo;
+using DevilFruits.BLL.Repositories;
 using DevilFruits.DAL.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,13 @@ namespace DevilFruits.IOC
 
             //Configuracion de AutoMapper
             services.AddAutoMapper(typeof(AutoMapperProfile));
+
+
+            //Implementacion de los repositorios
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            //Dependencias de los servicios
+
 
         }
 
