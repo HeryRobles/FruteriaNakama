@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DevilFruits.DAL\DevilFruits.DAL.csproj" />
+    <ProjectReference Include="..\DevilFruits.DTO\DevilFruits.DTO.csproj" />
+    <ProjectReference Include="..\DevilFruits.Model\DevilFruits.Model.csproj" />
+  </ItemGroup>
+
 </Project>
