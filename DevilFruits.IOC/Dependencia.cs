@@ -29,6 +29,13 @@ namespace DevilFruits.IOC
 
             //Dependencias de los servicios
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IFrutaService, FrutaService>();
+
+            //Configuracion de la URL de la API externa
+            services.AddHttpClient<IFrutaService, FrutaService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]);
+            });
 
         }
 
