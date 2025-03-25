@@ -1,9 +1,10 @@
 ﻿using DevilFruits.DTO;
+using DevilFruits.Model.Entities;
 
 namespace DevilFruits.BLL.Services.IServices
 {
     public interface IJwtService
     {
-        string GenerarToken(LoginDTO usuario);
+        string GenerarToken(Usuario usuario);
     }
 }

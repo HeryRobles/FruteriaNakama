@@ -75,7 +75,7 @@ namespace DevilFruits.API.Controllers.Usuarios
                 {
                     return NotFound(new { message = "Usuario no encontrado" });
                 }
-                return Ok(usuario);
+                return NoContent();
             }
             catch (Exception ex)
             {

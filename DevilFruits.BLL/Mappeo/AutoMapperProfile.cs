@@ -11,6 +11,9 @@ namespace DevilFruits.BLL.Mappeo
             CreateMap<Usuario, UsuarioDTO>()
                 .ForMember(dest => dest.Pass, opt => opt.Ignore( ));
 
+            CreateMap<Usuario, UsuarioDTO>()
+                .ForMember(dest => dest.Pass, opt => opt.Ignore());
+
             CreateMap<UsuarioDTO, Usuario>();
 
             CreateMap<Favorito, FavoritoDTO>();

@@ -1,6 +1,7 @@
 ﻿using DevilFruits.BLL.Mappeo;
 using DevilFruits.BLL.Repositories;
 using DevilFruits.BLL.Services;
+using DevilFruits.BLL.Services.Acciones;
 using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DAL.DataContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,13 +21,7 @@ namespace DevilFruits.IOC
             //Configuracion de la cadena de conexion
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(
-                    configuration.GetConnectionString("conectSQL"),
-                    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null
-                     ));
+                options.UseSqlServer(configuration.GetConnectionString("conectSQL"));
             });
 
 
@@ -54,7 +49,6 @@ namespace DevilFruits.IOC
 
             //Dependencias de los servicios
             services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IFrutaService, FrutaService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
 
@@ -64,7 +58,22 @@ namespace DevilFruits.IOC
                 client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]!);
             });
 
+            //Inyeccion de los servicios de acciones y funcionalidad para interactuar con las frutas de la api externa
+            services.AddScoped<IFavoritoService, FavoritoService>();
+            services.AddScoped<IResenaService, ResenaService>();
+
+            services.AddScoped<IFrutaResenaService, FrutaResenaService>();
+
+
+            ////Configuracion de la URL de la API externa
+            //services.AddHttpClient("ExternalApi", client =>
+            //{
+            //    client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]!);
+            //    client.DefaultRequestHeaders.Add("Accept", "application/json");
+            //});
+
         }
 
     }
 }
+

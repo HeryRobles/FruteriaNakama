@@ -30,13 +30,11 @@ namespace DevilFruits.BLL.Services
             var usuario = await _usuarioRepository.Obtener(x => x.Email == loginDTO.Email);
             
             if (usuario == null || !VerifyPassword(loginDTO.Password, usuario.Pass))
-                throw new Exception("Usuario o contraseña incorrectos");
-
-            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
+                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos");
 
             return new TokenDTO {
-                Token = _jwtService.GenerarToken(loginDTO),
-                Expiration = DateTime.Now.AddHours(5).ToString()
+                Token = _jwtService.GenerarToken(usuario),
+                Expiration = DateTime.Now.AddHours(1).ToString()
             };
         }
 
@@ -52,8 +50,8 @@ namespace DevilFruits.BLL.Services
             usuario.Rol = "User";
             usuario.Pass = HashPassword(usuario.Pass);
 
-            var usuarioCreado = await _usuarioRepository.Crear(usuario);
-            return _mapper.Map<UsuarioDTO>(usuarioCreado);
+            await _usuarioRepository.Crear(usuario);
+            return _mapper.Map<UsuarioDTO>(usuario);
 
         }
 

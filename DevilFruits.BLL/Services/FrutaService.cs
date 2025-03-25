@@ -1,4 +1,5 @@
-﻿using DevilFruits.BLL.Services.IServices;
+﻿using DevilFruits.BLL.Services.Acciones;
+using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -9,7 +10,7 @@ namespace DevilFruits.BLL.Services
     {
         private readonly HttpClient _httpClient;
 
-        public FrutaService(HttpClient httpClient, IConfiguration configuration)
+        public FrutaService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -22,7 +23,7 @@ namespace DevilFruits.BLL.Services
             var content = await response.Content.ReadAsStringAsync();
             var frutas = JsonConvert.DeserializeObject<List<FrutaDTO>>(content);
             
-            return frutas;
+            return frutas!;
         }
 
         public async Task<FrutaDTO> ObtenerFrutaAsync(int id)
@@ -33,7 +34,8 @@ namespace DevilFruits.BLL.Services
             var content = await response.Content.ReadAsStringAsync();
 
             var fruta = JsonConvert.DeserializeObject<FrutaDTO>(content);
-            return fruta;
+            return fruta!;
         }
+        
     }
 }
