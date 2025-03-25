@@ -64,16 +64,15 @@ namespace DevilFruits.IOC
 
             services.AddScoped<IFrutaResenaService, FrutaResenaService>();
 
-
-            ////Configuracion de la URL de la API externa
-            //services.AddHttpClient("ExternalApi", client =>
-            //{
-            //    client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]!);
-            //    client.DefaultRequestHeaders.Add("Accept", "application/json");
-            //});
-
         }
 
     }
 }
 
+
+////Configuracion de la URL de la API externa
+//services.AddHttpClient("ExternalApi", client =>
+//{
+//    client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]!);
+//    client.DefaultRequestHeaders.Add("Accept", "application/json");
+//});

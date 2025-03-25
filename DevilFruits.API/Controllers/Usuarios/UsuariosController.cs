@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.Usuarios
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuariosController : ControllerBase

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevilFruits.API", "DevilFruits.API\DevilFruits.API.csproj", "{FD269753-30FA-4756-B79F-3CA82A6EBBD0}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevilFruits.DTO", "DevilFruits.DTO\DevilFruits.DTO.csproj", "{BE3D122F-A9AE-4DC8-A3D6-378B3224604D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevilFruits.BLL", "DevilFruits.BLL\DevilFruits.BLL.csproj", "{6DA6D2AE-CF25-4C86-9542-C32E72A60A1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevilFruits.Client", "DevilFruits.Client\DevilFruits.Client.csproj", "{B70C4DF8-3C5F-4B38-9B32-497799103C44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{6DA6D2AE-CF25-4C86-9542-C32E72A60A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA6D2AE-CF25-4C86-9542-C32E72A60A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA6D2AE-CF25-4C86-9542-C32E72A60A1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B70C4DF8-3C5F-4B38-9B32-497799103C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B70C4DF8-3C5F-4B38-9B32-497799103C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B70C4DF8-3C5F-4B38-9B32-497799103C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B70C4DF8-3C5F-4B38-9B32-497799103C44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
