@@ -1,6 +1,6 @@
 ﻿using DevilFruits.BLL.Services.Acciones;
 using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
+using DevilFruits.DTO.ExternalModel;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

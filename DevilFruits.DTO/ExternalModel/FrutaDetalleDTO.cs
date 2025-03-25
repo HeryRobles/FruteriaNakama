@@ -1,4 +1,6 @@
-﻿namespace DevilFruits.DTO
+﻿using DevilFruits.DTO.Models;
+
+namespace DevilFruits.DTO.ExternalModel
 {
     public class FrutaDetalleDTO : FrutaDTO
     {

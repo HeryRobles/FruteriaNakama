@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using DevilFruits.BLL.Repositories;
 using DevilFruits.Model.Entities;
-using DevilFruits.DTO;
 using DevilFruits.BLL.Services.IServices;
+using DevilFruits.DTO.Models;
 
 namespace DevilFruits.BLL.Services
 {
@@ -43,7 +43,7 @@ namespace DevilFruits.BLL.Services
                 }
                 return _mapper.Map<UsuarioDTO>(usuario);
             }
-            catch 
+            catch
             {
                 throw;
             }

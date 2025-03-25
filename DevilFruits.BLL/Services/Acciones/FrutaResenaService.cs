@@ -1,5 +1,5 @@
 ﻿using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
+using DevilFruits.DTO.ExternalModel;
 
 namespace DevilFruits.BLL.Services.Acciones
 {

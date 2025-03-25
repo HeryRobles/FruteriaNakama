@@ -1,9 +1,11 @@
 ﻿using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.Actions
 {
+    [Authorize(Roles = "Admin, user")]
     [Route("api/frutas-detalle")]
     [ApiController]
     public class FrutasDetalleController : ControllerBase

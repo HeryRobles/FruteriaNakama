@@ -1,9 +1,11 @@
 ﻿using DevilFruits.BLL.Services.Acciones;
-using DevilFruits.DTO;
+using DevilFruits.DTO.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.Actions
 {
+    [Authorize(Roles = "Admin, user")]
     [Route("api/[controller]")]
     [ApiController]
     public class FavoritosController : ControllerBase

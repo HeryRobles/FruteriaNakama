@@ -1,6 +1,5 @@
 ﻿using DevilFruits.BLL.Repositories;
 using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
 using DevilFruits.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

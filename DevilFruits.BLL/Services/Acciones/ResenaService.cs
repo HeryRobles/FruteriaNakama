@@ -1,6 +1,6 @@
 ﻿using DevilFruits.BLL.Repositories;
 using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
+using DevilFruits.DTO.Models;
 using DevilFruits.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

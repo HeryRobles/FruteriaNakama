@@ -2,6 +2,7 @@
 using DevilFruits.BLL.Repositories;
 using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
+using DevilFruits.DTO.Models;
 using DevilFruits.Model.Entities;
 
 namespace DevilFruits.BLL.Services
@@ -28,13 +29,14 @@ namespace DevilFruits.BLL.Services
         public async Task<TokenDTO> Login(LoginDTO loginDTO)
         {
             var usuario = await _usuarioRepository.Obtener(x => x.Email == loginDTO.Email);
-            
+
             if (usuario == null || !VerifyPassword(loginDTO.Password, usuario.Pass))
                 throw new UnauthorizedAccessException("Usuario o contraseña incorrectos");
 
-            return new TokenDTO {
+            return new TokenDTO
+            {
                 Token = _jwtService.GenerarToken(usuario),
-                Expiration = DateTime.Now.AddHours(1).ToString()
+                Expiration = DateTime.UtcNow.AddHours(1).ToString("o")
             };
         }
 
@@ -42,12 +44,12 @@ namespace DevilFruits.BLL.Services
         {
             var existeUsuario = await _usuarioRepository.Obtener(x => x.Email == usuarioDTO.Email);
             if (existeUsuario != null)
-            
+
                 throw new Exception("El usuario ya existe");
-            
+
             var usuario = _mapper.Map<Usuario>(usuarioDTO);
 
-            usuario.Rol = "User";
+            usuario.Rol = "user";
             usuario.Pass = HashPassword(usuario.Pass);
 
             await _usuarioRepository.Crear(usuario);

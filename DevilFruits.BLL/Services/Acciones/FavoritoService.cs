@@ -1,13 +1,14 @@
 ﻿using DevilFruits.BLL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
 using DevilFruits.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DevilFruits.DTO.ExternalModel;
+using DevilFruits.DTO.Models;
 
 namespace DevilFruits.BLL.Services.Acciones
 {

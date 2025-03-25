@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DevilFruits.DTO;
+using DevilFruits.DTO.Models;
 using DevilFruits.Model.Entities;
 
 namespace DevilFruits.BLL.Mappeo

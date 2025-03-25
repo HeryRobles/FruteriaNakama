@@ -1,9 +1,11 @@
 ﻿using DevilFruits.BLL.Services.IServices;
-using DevilFruits.DTO;
+using DevilFruits.DTO.ExternalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.FruitsExternalAPI
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class FruitsController : ControllerBase

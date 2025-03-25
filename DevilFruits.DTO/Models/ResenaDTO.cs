@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DevilFruits.DTO
+namespace DevilFruits.DTO.Models
 {
     public class ResenaDTO
     {

@@ -1,9 +1,12 @@
 ﻿using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
+using DevilFruits.DTO.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.Usuarios
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuariosController : ControllerBase
@@ -15,6 +18,7 @@ namespace DevilFruits.API.Controllers.Usuarios
             _usuarioService = usuarioService;
         }
 
+        
         [HttpGet("lista")]
         public async Task<ActionResult<List<UsuarioDTO>>> ListaUsuarios()
         {
@@ -35,9 +39,9 @@ namespace DevilFruits.API.Controllers.Usuarios
             try
             {
                 var usuario = await _usuarioService.ObtenerUsuario(id);
-                if(usuario== null)
+                if (usuario == null)
                 {
-                    return NotFound(new {message = "Usuario no encontrado" });
+                    return NotFound(new { message = "Usuario no encontrado" });
                 }
                 return Ok(usuario);
             }
@@ -48,7 +52,7 @@ namespace DevilFruits.API.Controllers.Usuarios
         }
 
         [HttpPost]
-        public async Task<ActionResult<UsuarioDTO>> CrearUsuario([FromBody]UsuarioDTO usuario)
+        public async Task<ActionResult<UsuarioDTO>> CrearUsuario([FromBody] UsuarioDTO usuario)
         {
             try
             {
@@ -66,7 +70,7 @@ namespace DevilFruits.API.Controllers.Usuarios
         {
             try
             {
-                if(id != usuario.Id)
+                if (id != usuario.Id)
                 {
                     return BadRequest(new { message = "Datos incorrectos" });
                 }

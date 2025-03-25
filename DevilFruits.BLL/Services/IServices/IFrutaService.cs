@@ -1,4 +1,4 @@
-﻿using DevilFruits.DTO;
+﻿using DevilFruits.DTO.ExternalModel;
 
 namespace DevilFruits.BLL.Services.IServices
 {
