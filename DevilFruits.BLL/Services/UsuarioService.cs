@@ -5,6 +5,7 @@ using DevilFruits.Model.Entities;
 using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO.Models;
 using DevilFruits.BLL.Response;
+using System.Net;
 
 namespace DevilFruits.BLL.Services
 {
@@ -31,7 +32,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<List<UsuarioDTO>>(
                     response: result,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
                 );
 
 
@@ -42,7 +43,7 @@ namespace DevilFruits.BLL.Services
                     response: null,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        System.Net.HttpStatusCode.InternalServerError)
+                        HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al obtener lista de usuarios: {ex.Message}")
                     }
@@ -61,7 +62,7 @@ namespace DevilFruits.BLL.Services
                         response: null,
                         error: true,
                         httpResponseMessage: new HttpResponseMessage(
-                            System.Net.HttpStatusCode.NotFound)
+                            HttpStatusCode.NotFound)
                         {
                             Content = new StringContent("Usuario no encontrado")
                         }
@@ -72,7 +73,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<UsuarioDTO>(
                     response: result,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
                 );
 
             }
@@ -82,7 +83,7 @@ namespace DevilFruits.BLL.Services
                     response: null,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        System.Net.HttpStatusCode.InternalServerError)
+                        HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al obtener el usuario: {ex.Message}")
                     }
@@ -101,7 +102,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<UsuarioDTO>(
                     response: result,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
                 );
             }
             catch (Exception ex)
@@ -110,7 +111,7 @@ namespace DevilFruits.BLL.Services
                     response: null,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        System.Net.HttpStatusCode.InternalServerError)
+                    HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al crear el usuario: {ex.Message}")
                     }
@@ -129,7 +130,7 @@ namespace DevilFruits.BLL.Services
                         response: false,
                         error: true,
                         httpResponseMessage: new HttpResponseMessage(
-                            System.Net.HttpStatusCode.NotFound)
+                            HttpStatusCode.NotFound)
                         {
                             Content = new StringContent("Usuario no encontrado")
                         }
@@ -142,7 +143,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<bool>(
                     response: resultado,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
                 );
 
             }
@@ -152,7 +153,7 @@ namespace DevilFruits.BLL.Services
                     response: false,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        System.Net.HttpStatusCode.InternalServerError)
+                        HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al editar el usuario: {ex.Message}")
                     }
@@ -171,7 +172,7 @@ namespace DevilFruits.BLL.Services
                         response: false,
                         error: true,
                         httpResponseMessage: new HttpResponseMessage(
-                            System.Net.HttpStatusCode.NotFound)
+                            HttpStatusCode.NotFound)
                         {
                             Content = new StringContent("Usuario no encontrado")
                         }
@@ -181,7 +182,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<bool>(
                     response: resultado,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
                 );
             }
             catch (Exception ex)
@@ -190,7 +191,7 @@ namespace DevilFruits.BLL.Services
                     response: false,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        System.Net.HttpStatusCode.InternalServerError)
+                        HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al eliminar el usuario: {ex.Message}")
                     }
