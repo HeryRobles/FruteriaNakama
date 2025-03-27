@@ -4,10 +4,10 @@ namespace DevilFruits.BLL.Repositories
 {
     public interface IGenericRepository<TModel> where TModel : class
     {
-        Task<TModel> Obtener(Expression<Func<TModel, bool>> filtro);
-        Task<TModel> Crear(TModel modelo);
-        Task<bool> Editar(TModel modelo);
-        Task<bool> Eliminar(TModel modelo);
-        Task<IQueryable<TModel>> Consultar(Expression<Func<TModel, bool>> filtro = null!);
+        Task<TModel> GetAsync(Expression<Func<TModel, bool>> filtro);
+        Task<TModel> CreateAsync(TModel modelo);
+        Task<bool> UpdateAsync(TModel modelo);
+        Task<bool> DeleteAsync(TModel modelo);
+        Task<IQueryable<TModel>> QueryAsync(Expression<Func<TModel, bool>> filtro = null!);
     }
 }

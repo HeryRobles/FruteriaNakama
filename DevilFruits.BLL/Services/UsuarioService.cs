@@ -4,6 +4,7 @@ using DevilFruits.BLL.Repositories;
 using DevilFruits.Model.Entities;
 using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO.Models;
+using DevilFruits.BLL.Response;
 
 namespace DevilFruits.BLL.Services
 {
@@ -18,81 +19,185 @@ namespace DevilFruits.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<UsuarioDTO>> ListaUsuarios()
+        public async Task<HttpResponseWrapper<List<UsuarioDTO>>> ListaUsuarios()
         {
+            
             try
             {
-                var query = await _repository.Consultar();
+                var query = await _repository.QueryAsync();
                 var listaUsuarios = await query.ToListAsync();
-                return _mapper.Map<List<UsuarioDTO>>(listaUsuarios);
+                var result = _mapper.Map<List<UsuarioDTO>>(listaUsuarios);
+
+                return new HttpResponseWrapper<List<UsuarioDTO>>(
+                    response: result,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                );
+
+
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al obtener la lista de usuarios", ex);
+                return new HttpResponseWrapper<List<UsuarioDTO>>(
+                    response: null,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(
+                        System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al obtener lista de usuarios: {ex.Message}")
+                    }
+                );
             }
         }
 
-        public async Task<UsuarioDTO> ObtenerUsuario(int id)
+        public async Task<HttpResponseWrapper<UsuarioDTO>> ObtenerUsuario(int id)
         {
             try
             {
-                var usuario = await _repository.Obtener(x => x.Id == id);
+                var usuario = await _repository.GetAsync(x => x.Id == id);
                 if (usuario == null)
                 {
-                    throw new Exception("Usuario no encontrado");
+                    return new HttpResponseWrapper<UsuarioDTO>(
+                        response: null,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(
+                            System.Net.HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent("Usuario no encontrado")
+                        }
+                    );
+
                 }
-                return _mapper.Map<UsuarioDTO>(usuario);
+                var result = _mapper.Map<UsuarioDTO>(usuario);
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: result,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                );
+
             }
-            catch
+            catch (Exception ex) 
             {
-                throw;
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: null,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(
+                        System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al obtener el usuario: {ex.Message}")
+                    }
+                );
             }
         }
 
-        public async Task<UsuarioDTO> CrearUsuario(UsuarioDTO usuario)
+        public async Task<HttpResponseWrapper<UsuarioDTO>> CrearUsuario(UsuarioDTO usuario)
         {
             try
             {
                 var nuevoUsuario = _mapper.Map<Usuario>(usuario);
-                var usuarioCreado = await _repository.Crear(nuevoUsuario);
-                return _mapper.Map<UsuarioDTO>(usuarioCreado);
-            }
-            catch
-            {
-                throw;
-            }
-        }
+                var usuarioCreado = await _repository.CreateAsync(nuevoUsuario);
+                var result = _mapper.Map<UsuarioDTO>(usuarioCreado);
 
-        public async Task<bool> EditarUsuario(UsuarioDTO usuario, int usuarioActual)
-        {
-            try
-            {
-                var usuarioEditar = _mapper.Map<Usuario>(usuario);
-                usuarioEditar.Id = usuarioActual;
-                return await _repository.Editar(usuarioEditar);
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: result,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                );
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al editar el usuario", ex);
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: null,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(
+                        System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al crear el usuario: {ex.Message}")
+                    }
+                );
             }
         }
 
-        public async Task<bool> EliminarUsuario(int id)
+        public async Task<HttpResponseWrapper<bool>> EditarUsuario(UsuarioDTO usuario, int usuarioActual)
         {
             try
             {
-                var usuario = await _repository.Obtener(x => x.Id == id);
-                if (usuario == null)
+                var usuarioExistente = await _repository.GetAsync(x => x.Id == usuario.Id);
+                if (usuarioExistente == null)
                 {
-                    throw new Exception("Usuario no encontrado");
+                    return new HttpResponseWrapper<bool>(
+                        response: false,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(
+                            System.Net.HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent("Usuario no encontrado")
+                        }
+                    );
                 }
-                return await _repository.Eliminar(usuario);
+                var usuarioEditado = _mapper.Map<Usuario>(usuario);
+                usuarioExistente.Id = usuarioEditado.Id;
+                var resultado = await _repository.UpdateAsync(usuarioExistente);
+
+                return new HttpResponseWrapper<bool>(
+                    response: resultado,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                );
+
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al eliminar el usuario", ex);
+                return new HttpResponseWrapper<bool>(
+                    response: false,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(
+                        System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al editar el usuario: {ex.Message}")
+                    }
+                );
             }
         }
+
+        public async Task<HttpResponseWrapper<bool>> EliminarUsuario(int id)
+        {
+            try
+            {
+                var usuario = await _repository.GetAsync(x => x.Id == id);
+                if(usuario == null)
+                {
+                    return new HttpResponseWrapper<bool>(
+                        response: false,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(
+                            System.Net.HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent("Usuario no encontrado")
+                        }
+                    );
+                }
+                var resultado = await _repository.DeleteAsync(usuario);
+                return new HttpResponseWrapper<bool>(
+                    response: resultado,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                );
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseWrapper<bool>(
+                    response: false,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(
+                        System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al eliminar el usuario: {ex.Message}")
+                    }
+                );
+            }
+        }
+
     }
 
 }

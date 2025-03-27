@@ -31,7 +31,7 @@ namespace DevilFruits.BLL.Services.Acciones
         public async Task<bool> AgregarFavorito(FavoritoDTO favoritoDTO)
         {
             var existeFavorito = await _favoritoRepository.
-                Obtener(x => x.UsuarioId == favoritoDTO.UsuarioId && x.DevilFruitId == favoritoDTO.DevilFruitId);
+                GetAsync(x => x.UsuarioId == favoritoDTO.UsuarioId && x.DevilFruitId == favoritoDTO.DevilFruitId);
             if (existeFavorito != null)
                 throw new Exception("La fruta ya se encuentra en favoritos");
 
@@ -41,13 +41,13 @@ namespace DevilFruits.BLL.Services.Acciones
                 DevilFruitId = favoritoDTO.DevilFruitId
             };
 
-            await _favoritoRepository.Crear(favorito);
+            await _favoritoRepository.UpdateAsync(favorito);
             return true;
         }
 
         public async Task<List<FrutaDTO>> ObtenerFavoritos(int idUsuario)
         {
-            var favoritosQuery = await _favoritoRepository.Consultar(x => x.UsuarioId == idUsuario);
+            var favoritosQuery = await _favoritoRepository.QueryAsync(x => x.UsuarioId == idUsuario);
             var favoritos = favoritosQuery.ToList();
 
             var frutasFavoritas = new List<FrutaDTO>();

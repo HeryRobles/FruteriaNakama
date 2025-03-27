@@ -11,16 +11,13 @@ namespace DevilFruits.BLL.Mappeo
             CreateMap<Usuario, UsuarioDTO>()
                 .ForMember(dest => dest.Pass, opt => opt.Ignore( ));
 
-            CreateMap<Usuario, UsuarioDTO>()
-                .ForMember(dest => dest.Pass, opt => opt.Ignore());
+            CreateMap<UsuarioDTO, Usuario>()
+                .ForMember(dest => dest.Pass, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Pass) ? null : BCrypt.Net.BCrypt.HashPassword(src.Pass)))
+                .ForMember(dest => dest.Rol, opt => opt.MapFrom(src => src.Rol.ToLower()));
 
-            CreateMap<UsuarioDTO, Usuario>();
+            CreateMap<Favorito, FavoritoDTO>().ReverseMap();
 
-            CreateMap<Favorito, FavoritoDTO>();
-            CreateMap<FavoritoDTO, Favorito>();
-
-            CreateMap<Reseña, ResenaDTO>();
-            CreateMap<ResenaDTO, Reseña>();
+            CreateMap<Reseña, ResenaDTO>().ReverseMap();
 
 
         }

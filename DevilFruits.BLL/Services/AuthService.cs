@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using DevilFruits.BLL.Repositories;
+using DevilFruits.BLL.Response;
 using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
 using DevilFruits.DTO.Models;
 using DevilFruits.Model.Entities;
+using System.Net;
 
 namespace DevilFruits.BLL.Services
 {
 
     public interface IAuthService
     {
-        Task<UsuarioDTO> Registro(UsuarioDTO usuarioDTO);
-        Task<TokenDTO> Login(LoginDTO loginDTO);
+        Task<HttpResponseWrapper<UsuarioDTO>> Registro(UsuarioDTO usuarioDTO);
+        Task<HttpResponseWrapper<TokenDTO>> Login(LoginDTO loginDTO);
     }
     public class AuthService : IAuthService
     {
@@ -26,34 +28,101 @@ namespace DevilFruits.BLL.Services
             _jwtService = jwtService;
         }
 
-        public async Task<TokenDTO> Login(LoginDTO loginDTO)
+        public async Task<HttpResponseWrapper<TokenDTO>> Login(LoginDTO loginDTO)
         {
-            var usuario = await _usuarioRepository.Obtener(x => x.Email == loginDTO.Email);
-
-            if (usuario == null || !VerifyPassword(loginDTO.Password, usuario.Pass))
-                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos");
-
-            return new TokenDTO
+            try
             {
-                Token = _jwtService.GenerarToken(usuario),
-                Expiration = DateTime.UtcNow.AddHours(1).ToString("o")
-            };
+                var usuario = await _usuarioRepository.GetAsync(x => x.Email == loginDTO.Email);
+                if(usuario == null || !VerifyPassword(loginDTO.Password, usuario.Pass))
+                {
+                    return new HttpResponseWrapper<TokenDTO>(
+                        response: null,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(HttpStatusCode.Unauthorized)
+                        {
+                            Content = new StringContent("Usuario o contraseña incorrectos")
+                        }
+                    );
+                }
+                var token = _jwtService.GenerarToken(usuario);
+                return new HttpResponseWrapper<TokenDTO>(
+                    response: new TokenDTO 
+                    { 
+                        Token = token,
+                        Expiration = DateTime.UtcNow.AddHours(5).ToString("o")
+                    },
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
+                );
+
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseWrapper<TokenDTO>(
+                    response: null,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al iniciar sesión: {ex.Message}")
+                    }
+                );
+
+            }
         }
 
-        public async Task<UsuarioDTO> Registro(UsuarioDTO usuarioDTO)
+        public async Task<HttpResponseWrapper<UsuarioDTO>> Registro(UsuarioDTO usuarioDTO)
         {
-            var existeUsuario = await _usuarioRepository.Obtener(x => x.Email == usuarioDTO.Email);
-            if (existeUsuario != null)
+            try
+            {
+                var usuarioExistente = await _usuarioRepository.GetAsync(x => x.Email == usuarioDTO.Email);
+                if(usuarioExistente != null)
+                {
+                    return new HttpResponseWrapper<UsuarioDTO>(
+                        response: null,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(HttpStatusCode.BadRequest)
+                        {
+                            Content = new StringContent("El usuario ya existe")
+                        }
+                    );
+                }
+                var usuario = _mapper.Map<Usuario>(usuarioDTO);
+                if (string.IsNullOrWhiteSpace(usuarioDTO.Pass))
+                {
+                    return new HttpResponseWrapper<UsuarioDTO>(
+                        response: null,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(HttpStatusCode.BadRequest)
+                        {
+                            Content = new StringContent("La contraseña es obligatoria")
+                        }
+                    );
+                }
 
-                throw new Exception("El usuario ya existe");
+                usuario.Rol = "user";
+                usuario.Pass = HashPassword(usuarioDTO.Pass);
 
-            var usuario = _mapper.Map<Usuario>(usuarioDTO);
+                var usuarioCreado = await _usuarioRepository.CreateAsync(usuario);
+                var result = _mapper.Map<UsuarioDTO>(usuarioCreado);
 
-            usuario.Rol = "user";
-            usuario.Pass = HashPassword(usuario.Pass);
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: result,
+                    error: false,
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.Created)
+                );
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseWrapper<UsuarioDTO>(
+                    response: null,
+                    error: true,
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent($"Error al registrar el usuario: {ex.Message}")
+                    }
+                );
 
-            await _usuarioRepository.Crear(usuario);
-            return _mapper.Map<UsuarioDTO>(usuario);
+            }
 
         }
 

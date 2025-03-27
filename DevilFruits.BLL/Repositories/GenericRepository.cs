@@ -13,7 +13,7 @@ namespace DevilFruits.BLL.Repositories
             _dbcontext = dbcontext;
         }
 
-        public async Task<TModelo> Obtener(Expression<Func<TModelo, bool>> filtro)
+        public async Task<TModelo> GetAsync(Expression<Func<TModelo, bool>> filtro)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace DevilFruits.BLL.Repositories
 
         }
 
-        public async Task<TModelo> Crear(TModelo modelo)
+        public async Task<TModelo> CreateAsync(TModelo modelo)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace DevilFruits.BLL.Repositories
             }
         }
 
-        public async Task<bool> Editar(TModelo modelo)
+        public async Task<bool> UpdateAsync(TModelo modelo)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace DevilFruits.BLL.Repositories
             }
         }
 
-        public async Task<bool> Eliminar(TModelo modelo)
+        public async Task<bool> DeleteAsync(TModelo modelo)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace DevilFruits.BLL.Repositories
             }
         }
 
-        public async Task<IQueryable<TModelo>> Consultar(Expression<Func<TModelo, bool>> filtro = null)
+        public async Task<IQueryable<TModelo>> QueryAsync(Expression<Func<TModelo, bool>> filtro = null)
         {
             try
             {

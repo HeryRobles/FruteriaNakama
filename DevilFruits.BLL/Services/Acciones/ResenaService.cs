@@ -51,7 +51,7 @@ namespace DevilFruits.BLL.Services.Acciones
                     Puntaje = resenaDTO.Puntaje,
                 };
 
-                var resenaCreada = await _resenaRepository.Crear(resena);
+                var resenaCreada = await _resenaRepository.CreateAsync(resena);
                 if(resenaCreada == null)
                 {
                     _logger.LogError("No se pudo crear la reseña");
@@ -71,7 +71,7 @@ namespace DevilFruits.BLL.Services.Acciones
         {
             try
             {
-                var resenasQuery = await _resenaRepository.Consultar(x => x.DevilFruitId == devilFruitId);
+                var resenasQuery = await _resenaRepository.QueryAsync(x => x.DevilFruitId == devilFruitId);
                 var resenas = await resenasQuery.ToListAsync();
 
                 return resenas.Select(x => new ResenaDTO
@@ -94,7 +94,7 @@ namespace DevilFruits.BLL.Services.Acciones
         {
             try
             {
-                var resenasQuery = await _resenaRepository.Consultar(x => x.UsuarioId == usuarioId);
+                var resenasQuery = await _resenaRepository.QueryAsync(x => x.UsuarioId == usuarioId);
                 var resenas = await resenasQuery.ToListAsync();
 
                 return resenas.Select(x => new ResenaDTO

@@ -22,83 +22,69 @@ namespace DevilFruits.API.Controllers.Usuarios
         [HttpGet("lista")]
         public async Task<ActionResult<List<UsuarioDTO>>> ListaUsuarios()
         {
-            try
+            var response = await _usuarioService.ListaUsuarios();
+            if(response.Error)
             {
-                var usuarios = await _usuarioService.ListaUsuarios();
-                return Ok(usuarios);
+
+                return BadRequest(new { message = await response.GetErrorMessageAsync() });
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(response.Response);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDTO>> ObtenerUsuario(int id)
         {
-            try
+            var response = await _usuarioService.ObtenerUsuario(id);
+            if (response.Error)
             {
-                var usuario = await _usuarioService.ObtenerUsuario(id);
-                if (usuario == null)
-                {
-                    return NotFound(new { message = "Usuario no encontrado" });
-                }
-                return Ok(usuario);
+                var errorMessage = await response.GetErrorMessageAsync();
+                return StatusCode((int)response.StatusCode, new { message = errorMessage });
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok(response.Response);
         }
 
         [HttpPost]
         public async Task<ActionResult<UsuarioDTO>> CrearUsuario([FromBody] UsuarioDTO usuario)
         {
-            try
+            var response = await _usuarioService.CrearUsuario(usuario);
+            if (response.Error)
             {
-                var usuarioCreado = await _usuarioService.CrearUsuario(usuario);
-                return CreatedAtAction(nameof(ObtenerUsuario), new { id = usuarioCreado.Id }, usuarioCreado);
+                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
             }
-            catch (Exception ex)
+
+            if (response.Response == null || response.Response.Id == 0)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = "No se pudo generar un ID válido para el usuario." });
             }
+            return CreatedAtAction(nameof(ObtenerUsuario), new { id = response.Response.Id }, response.Response);
+
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UsuarioDTO>> EditarUsuario(int id, [FromBody] UsuarioDTO usuario)
         {
-            try
+            if (id != usuario.Id)
+            
+                return BadRequest(new { message = "El Id del usuario no coincide" });
+            
+            var response = await _usuarioService.EditarUsuario(usuario, id);
+            if (response.Error)
             {
-                if (id != usuario.Id)
-                {
-                    return BadRequest(new { message = "Datos incorrectos" });
-                }
-                var usuarioEditado = await _usuarioService.EditarUsuario(usuario, id);
-                if (!usuarioEditado)
-                {
-                    return NotFound(new { message = "Usuario no encontrado" });
-                }
-                return NoContent();
+                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> EliminarUsuario(int id)
         {
-            try
+            var response = await _usuarioService.EliminarUsuario(id);
+
+            if (response.Error)
             {
-                var resultado = await _usuarioService.EliminarUsuario(id);
-                return Ok(resultado);
+                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return NoContent();
         }
 
     }

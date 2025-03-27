@@ -12,12 +12,10 @@ namespace DevilFruits.BLL.Services
     public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
-        //private readonly IGenericRepository<Usuario> _usuarioRepository;
 
-        public JwtService(IConfiguration configuration) //IGenericRepository<Usuario> usuarioRepository)
+        public JwtService(IConfiguration configuration) 
         {
             _configuration = configuration;
-            //_usuarioRepository = usuarioRepository;
         }
 
         public string GenerarToken(Usuario usuario)
@@ -27,7 +25,6 @@ namespace DevilFruits.BLL.Services
 
             try
             {
-                //var usuario = await _usuarioRepository.Obtener(u => u.Email == loginDto.Email);
 
                 if (usuario == null)
                     throw new Exception("Usuario no encontrado");
@@ -51,7 +48,6 @@ namespace DevilFruits.BLL.Services
                         SecurityAlgorithms.HmacSha256Signature)
                 };
 
-                //var token = tokenHandler.CreateToken(tokenDescriptor);
                 return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
             }
             catch

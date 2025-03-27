@@ -2,6 +2,7 @@
 using DevilFruits.DTO;
 using DevilFruits.DTO.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace DevilFruits.API.Controllers.Access
 {
@@ -19,38 +20,46 @@ namespace DevilFruits.API.Controllers.Access
         }
 
         [HttpPost("registrarse")]
-        public async Task<ActionResult> RegistrarAsync([FromBody] UsuarioDTO model)
+        public async Task<ActionResult<UsuarioDTO>> RegistrarAsync([FromBody] UsuarioDTO usuarioDTO)
         {
-            try
+            var response = await _authService.Registro(usuarioDTO);
+            if(response.Error)
             {
-                var usuario = await _authService.Registro(model);
-                return Ok(usuario);
+                _logger.LogWarning("Error al registrar usuario: {Mensaje}", 
+                    await response.GetErrorMessageAsync());
+                return StatusCode((int)response.StatusCode, new 
+                { 
+                    Mensaje = await response.GetErrorMessageAsync() 
+                });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al registrar usuario");
-                return BadRequest(ex.Message);
-            }
+            return Ok(response);
         }
 
         [HttpPost("iniciosesion")]
-        public async Task<ActionResult> Login([FromBody] LoginDTO model)
+        public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginDTO loginDTO)
         {
-            try
+            var response = await _authService.Login(loginDTO);
+            if (response.Error)
             {
-                var token = await _authService.Login(model);
-                return Ok(token);
+                var errorMessage = await response.GetErrorMessageAsync();
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    _logger.LogWarning("Intento de inicio de sesión fallido para {Email}: {Message}",
+                    loginDTO.Email, errorMessage);
+                    return Unauthorized(new
+                    {
+                        Mensaje = await response.GetErrorMessageAsync()
+                    });
+                }
+                
+                _logger.LogError("Error durante login para {Email} (Código {StatusCode}): {Message}",
+                    loginDTO.Email, (int)response.StatusCode, errorMessage);
+
+                return StatusCode((int)response.StatusCode, new { Message = errorMessage });
+
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "Intento de inicio de sesión fallido");
-                return Unauthorized(new { Mensaje = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error durante el inicio de sesión");
-                return StatusCode(500, new { Mensaje = "Error interno del servidor" });
-            }
+            _logger.LogInformation("Login exitoso para: {Email}", loginDTO.Email);
+            return Ok(response.Response);
         }
     }
 }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace DevilFruits.BLL.Repositories
+namespace DevilFruits.BLL.Response
 {
     public class HttpResponseWrapper<T> : IDisposable
     {
@@ -78,7 +78,7 @@ namespace DevilFruits.BLL.Repositories
                 }
                 catch (JsonException)
                 {
-                    
+
                 }
 
                 return string.IsNullOrWhiteSpace(content) ? "Solicitud incorrecta" : content;
@@ -116,4 +116,3 @@ namespace DevilFruits.BLL.Repositories
         }
     }
 }
-        
