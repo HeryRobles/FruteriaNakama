@@ -1,8 +1,10 @@
 ﻿using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO;
 using DevilFruits.DTO.Models;
+using DevilFruits.DTO.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace DevilFruits.API.Controllers.Usuarios
 {
@@ -20,70 +22,91 @@ namespace DevilFruits.API.Controllers.Usuarios
 
         
         [HttpGet("lista")]
-        public async Task<ActionResult<List<UsuarioDTO>>> ListaUsuarios()
+        public async Task<ActionResult<ApiResponse<List<UsuarioDTO>>>> ListaUsuarios()
         {
             var response = await _usuarioService.ListaUsuarios();
-            if(response.Error)
-            {
+            var apiResponse = await response.ToApiResponseAsync();
 
-                return BadRequest(new { message = await response.GetErrorMessageAsync() });
+            if (response.Error)
+            {
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            return Ok(response.Response);
+            return Ok(apiResponse);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDTO>> ObtenerUsuario(int id)
+        public async Task<ActionResult<ApiResponse<UsuarioDTO>>> ObtenerUsuario(int id)
         {
             var response = await _usuarioService.ObtenerUsuario(id);
+            var apiResponse = await response.ToApiResponseAsync();
+
             if (response.Error)
             {
-                var errorMessage = await response.GetErrorMessageAsync();
-                return StatusCode((int)response.StatusCode, new { message = errorMessage });
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            return Ok(response.Response);
+            return Ok(apiResponse);
         }
 
         [HttpPost]
-        public async Task<ActionResult<UsuarioDTO>> CrearUsuario([FromBody] UsuarioDTO usuario)
+        public async Task<ActionResult<ApiResponse<UsuarioDTO>>> CrearUsuario([FromBody] UsuarioDTO usuario)
         {
             var response = await _usuarioService.CrearUsuario(usuario);
+            var apiResponse = await response.ToApiResponseAsync();
+
             if (response.Error)
+                return StatusCode(apiResponse.StatusCode, apiResponse);
+            
+
+            if (response.Response?.Id == 0)
             {
-                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
+                apiResponse.Success = false;
+                apiResponse.Message = "No se pudo generar un ID válido para el usuario";
+                apiResponse.StatusCode = (int)HttpStatusCode.BadRequest;
+                return BadRequest(apiResponse);
             }
 
-            if (response.Response == null || response.Response.Id == 0)
-            {
-                return BadRequest(new { message = "No se pudo generar un ID válido para el usuario." });
-            }
-            return CreatedAtAction(nameof(ObtenerUsuario), new { id = response.Response.Id }, response.Response);
+            return CreatedAtAction(
+                nameof(ObtenerUsuario),
+                new { id = response.Response?.Id },
+                apiResponse
+            );
 
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UsuarioDTO>> EditarUsuario(int id, [FromBody] UsuarioDTO usuario)
+        public async Task<ActionResult<ApiResponse<bool>>> EditarUsuario(int id, [FromBody] UsuarioDTO usuario)
         {
             if (id != usuario.Id)
-            
-                return BadRequest(new { message = "El Id del usuario no coincide" });
-            
-            var response = await _usuarioService.EditarUsuario(usuario, id);
-            if (response.Error)
             {
-                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
+                return BadRequest(new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "El ID del usuario no coincide",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                });
             }
+
+            var response = await _usuarioService.EditarUsuario(usuario, id);
+            var apiResponse = response.ToApiResponse();
+
+            if (response.Error)
+                return StatusCode(apiResponse.StatusCode, apiResponse);
+            
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> EliminarUsuario(int id)
+        public async Task<ActionResult<ApiResponse<bool>>> EliminarUsuario(int id)
         {
             var response = await _usuarioService.EliminarUsuario(id);
+            var apiResponse = response.ToApiResponse();
 
             if (response.Error)
             {
-                return StatusCode((int)response.StatusCode, new { message = await response.GetErrorMessageAsync() });
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
+
             return NoContent();
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Azure;
+using DevilFruits.DTO.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -88,6 +89,7 @@ namespace DevilFruits.BLL.Response
                 return "Solicitud incorrecta";
             }
         }
+
         public async Task<TResult?> DeserializeContentAsync<TResult>()
         {
             var content = await _httpResponseMessage.Content.ReadAsStringAsync();
@@ -113,6 +115,29 @@ namespace DevilFruits.BLL.Response
                 }
                 _disposed = true;
             }
+        }
+        public async Task<ApiResponse<T>> ToApiResponseAsync()
+        {
+            var errorMessage = Error ? await GetErrorMessageAsync() : null;
+
+            return new ApiResponse<T>
+            {
+                Success = !Error,
+                Data = Response,
+                Message = errorMessage,
+                StatusCode = (int)StatusCode
+            };
+        }
+
+        public ApiResponse<T> ToApiResponse()
+        {
+            return new ApiResponse<T>
+            {
+                Success = !Error,
+                Data = Response,
+                Message = _cachedErrorMessage,
+                StatusCode = (int)StatusCode
+            };
         }
     }
 }

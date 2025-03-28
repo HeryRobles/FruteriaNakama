@@ -95,6 +95,18 @@ namespace DevilFruits.BLL.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(usuario.Email))
+                {
+                    return new HttpResponseWrapper<UsuarioDTO>(
+                        response: null,
+                        error: true,
+                        httpResponseMessage: new HttpResponseMessage(HttpStatusCode.BadRequest)
+                        {
+                            Content = new StringContent("El email es requerido")
+                        }
+                    );
+                }
+
                 var nuevoUsuario = _mapper.Map<Usuario>(usuario);
                 var usuarioCreado = await _repository.CreateAsync(nuevoUsuario);
                 var result = _mapper.Map<UsuarioDTO>(usuarioCreado);
@@ -102,7 +114,7 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<UsuarioDTO>(
                     response: result,
                     error: false,
-                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.OK)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.Created)
                 );
             }
             catch (Exception ex)
@@ -110,10 +122,9 @@ namespace DevilFruits.BLL.Services
                 return new HttpResponseWrapper<UsuarioDTO>(
                     response: null,
                     error: true,
-                    httpResponseMessage: new HttpResponseMessage(
-                    HttpStatusCode.InternalServerError)
+                    httpResponseMessage: new HttpResponseMessage(HttpStatusCode.InternalServerError)
                     {
-                        Content = new StringContent($"Error al crear el usuario: {ex.Message}")
+                        Content = new StringContent($"Error al crear usuario: {ex.Message}")
                     }
                 );
             }
@@ -153,7 +164,7 @@ namespace DevilFruits.BLL.Services
                     response: false,
                     error: true,
                     httpResponseMessage: new HttpResponseMessage(
-                        HttpStatusCode.InternalServerError)
+                                         HttpStatusCode.InternalServerError)
                     {
                         Content = new StringContent($"Error al editar el usuario: {ex.Message}")
                     }
