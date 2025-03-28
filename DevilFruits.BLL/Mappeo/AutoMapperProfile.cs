@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DevilFruits.DTO.ExternalModel;
 using DevilFruits.DTO.Models;
 using DevilFruits.Model.Entities;
 
@@ -19,7 +20,9 @@ namespace DevilFruits.BLL.Mappeo
 
             CreateMap<Reseña, ResenaDTO>().ReverseMap();
 
-
+            CreateMap<FrutaDTO, FrutaDetalleDTO>()
+                .ForMember(dest => dest.Resenas, opt => opt.Ignore()) 
+                .ForMember(dest => dest.PuntajePromedio, opt => opt.Ignore());
         }
 
     }

@@ -17,6 +17,8 @@ namespace DevilFruits.IOC
     {
         public static void InyectarDependencias(this IServiceCollection services, IConfiguration configuration)
         {
+            //Configuracion de la memoria cache
+            services.AddMemoryCache();
 
             //Configuracion de la cadena de conexion
             services.AddDbContext<AppDbContext>(options =>
@@ -70,9 +72,4 @@ namespace DevilFruits.IOC
 }
 
 
-////Configuracion de la URL de la API externa
-//services.AddHttpClient("ExternalApi", client =>
-//{
-//    client.BaseAddress = new Uri(configuration["ExternalApi:UrlAPI"]!);
-//    client.DefaultRequestHeaders.Add("Accept", "application/json");
-//});
+

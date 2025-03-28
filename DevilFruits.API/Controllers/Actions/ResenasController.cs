@@ -1,11 +1,12 @@
 ﻿using DevilFruits.BLL.Services.Acciones;
 using DevilFruits.DTO.Models;
+using DevilFruits.DTO.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevilFruits.API.Controllers.Actions
 {
-    [Authorize(Roles = "Admin, user")]
+    //[Authorize(Roles = "Admin, user")]
     [Route("api/[controller]")]
     [ApiController]
     public class ResenasController : ControllerBase
@@ -16,68 +17,60 @@ namespace DevilFruits.API.Controllers.Actions
             _resenaService = resenaService;
         }
         [HttpPost("agregar")]
-        public async Task<ActionResult> AgregarResena([FromBody] ResenaDTO model)
+        public async Task<ActionResult<ApiResponse<bool>>> AgregarResena([FromBody] ResenaDTO model)
         {
-            try
+            var response = await _resenaService.CrearResenaAsync(model);
+            var apiResponse = await response.ToApiResponseAsync();
+
+            if (response.Error)
             {
-                var resena = await _resenaService.CrearResenaAsync(model);
-                return Ok(resena);
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return CreatedAtAction(
+                nameof(ObtenerResenasPorUsuario),
+                new { usuarioId = model.UsuarioId },
+                apiResponse
+            );
         }
         [HttpGet("usuario/{usuarioId:int}")]
-        public async Task<ActionResult> ObtenerResenasPorUsuario(int usuarioId)
+        public async Task<ActionResult<ApiResponse<List<ResenaDTO>>>> ObtenerResenasPorUsuario(int usuarioId)
         {
-            try
-            {
-                var resenas = await _resenaService.ObtenerResenasPorUsuarioAsync(usuarioId);
-                if (resenas == null || !resenas.Any())
-                {
-                    return Ok(new
-                    {
-                        message = "El usuario no tiene reseñas registradas",
-                        data = new List<ResenaDTO>()
-                    });
-                }
+            var response = await _resenaService.ObtenerResenasPorUsuarioAsync(usuarioId);
+            var apiResponse = await response.ToApiResponseAsync();
 
-                return Ok(new { data = resenas });
-            }
-            catch (Exception ex)
+            if (response.Error)
             {
-                return StatusCode(500, new
-                {
-                    message = "Error interno al obtener reseñas",
-                    error = ex.Message
-                });
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
+
+            if (response.Response == null || !response.Response.Any())
+            {
+                apiResponse.Message = "El usuario no tiene reseñas registradas";
+                return Ok(apiResponse);
+            }
+
+            return Ok(apiResponse);
+
         }
         [HttpGet("fruta/{devilFruitId:int}")]
-        public async Task<ActionResult> ObtenerResenasPorFruta(int devilFruitId)
+        public async Task<ActionResult<ApiResponse<List<ResenaDTO>>>> ObtenerResenasPorFruta(int devilFruitId)
         {
-            try
+            var response = await _resenaService.ObtenerResenasPorFrutaAsync(devilFruitId);
+            var apiResponse = await response.ToApiResponseAsync();
+
+            if (response.Error)
             {
-                var resenas = await _resenaService.ObtenerResenasPorFrutaAsync(devilFruitId);
-                if (resenas == null || !resenas.Any())
-                {
-                    return Ok(new
-                    {
-                        message = "La fruta no tiene reseñas registradas",
-                        data = new List<ResenaDTO>()
-                    });
-                }
-                return Ok(new { data = resenas });
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            catch (Exception ex)
+
+            if (response.Response == null || !response.Response.Any())
             {
-                return StatusCode(500, new
-                {
-                    message = "Error interno al obtener reseñas",
-                    error = ex.Message
-                });
+                apiResponse.Message = "La fruta no tiene reseñas registradas";
+                return Ok(apiResponse);
             }
+
+            return Ok(apiResponse);
         }
     }
 }

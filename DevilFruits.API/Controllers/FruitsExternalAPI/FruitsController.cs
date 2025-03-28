@@ -1,5 +1,6 @@
 ﻿using DevilFruits.BLL.Services.IServices;
 using DevilFruits.DTO.ExternalModel;
+using DevilFruits.DTO.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,30 @@ namespace DevilFruits.API.Controllers.FruitsExternalAPI
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<FrutaDTO>>> ListadoFruits()
+        public async Task<ActionResult<ApiResponse<List<FrutaDTO>>>> ListadoFruits()
         {
-            try
+            var response = await _fruitService.ListadoFrutas();
+            var apiResponse = await response.ToApiResponseAsync();
+
+            if (response.Error)
             {
-                var fruits = await _fruitService.ListadoFrutas();
-                return Ok(fruits);
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
-            }
+
+            return Ok(apiResponse);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<FrutaDTO>> ObtenerFruta(int id)
+        public async Task<ActionResult<ApiResponse<FrutaDTO>>> ObtenerFruta(int id)
         {
-            try
+            var response = await _fruitService.ObtenerFrutaAsync(id);
+            var apiResponse = await response.ToApiResponseAsync();
+
+            if (response.Error)
             {
-                var fruit = await _fruitService.ObtenerFrutaAsync(id);
-                if (fruit == null)
-                {
-                    return NotFound(new { message = "Fruta no encontrada" });
-                }
-                return Ok(fruit);
+                return StatusCode(apiResponse.StatusCode, apiResponse);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
-            }
+
+            return Ok(apiResponse);
         }
     }
 }
